@@ -82,8 +82,8 @@ class budgethealthState(BaseModel):
 
     @staticmethod
     def analyze_cash_flow(state: "budgethealthState") -> dict:
-        essential_total = state.essential_costs.values
-        discretionary_total = state.discretionary_spending.values
+        essential_total = state.essential_costs
+        discretionary_total = state.discretionary_spending
         surplus = state.income - (essential_total + discretionary_total)
         response = budgethealthState.llm.invoke(
             f"Analyze this household cash flow: income={state.income}, "
