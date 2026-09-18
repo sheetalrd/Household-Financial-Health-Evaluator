@@ -65,11 +65,11 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 class budgethealthState(BaseModel):
     income: float = 0.0
-    essential_costs: Dict[str, float] = {}
-    discretionary_spending: Dict[str, float] = {}
-    debts: Dict[str, float] = {}
+    essential_costs: float = 0.0
+    discretionary_spending: float = 0.0
+    debts: float = 0.0
     current_savings: float = 0.0
-    savings_goal: Dict[str, float] = {}
+    savings_goal: float = 0.0
     cash_flow_analysis: str = ""
     debt_pressure_analysis: str = ""
     savings_readiness_analysis: str = ""
@@ -82,8 +82,8 @@ class budgethealthState(BaseModel):
 
     @staticmethod
     def analyze_cash_flow(state: "budgethealthState") -> dict:
-        essential_total = sum(state.essential_costs.values())
-        discretionary_total = sum(state.discretionary_spending.values())
+        essential_total = state.essential_costs.values
+        discretionary_total = state.discretionary_spending.values
         surplus = state.income - (essential_total + discretionary_total)
         response = budgethealthState.llm.invoke(
             f"Analyze this household cash flow: income={state.income}, "
@@ -95,7 +95,7 @@ class budgethealthState(BaseModel):
 
     @staticmethod
     def analyze_debt_pressure(state: "budgethealthState") -> dict:
-        total_debt = sum(state.debts.values())
+        total_debt = state.debts
         debt_to_income_ratio = total_debt / state.income if state.income > 0 else float('inf')
         response = budgethealthState.llm.invoke(
             f"Analyze this household debt pressure: total debt={total_debt}, "
@@ -106,7 +106,7 @@ class budgethealthState(BaseModel):
 
     @staticmethod
     def analyze_savings_readiness(state: "budgethealthState") -> dict:
-        savings_goal_total = sum(state.savings_goal.values())
+        savings_goal_total = state.savings_goal
         savings_ratio = state.current_savings / savings_goal_total if savings_goal_total > 0 else float('inf')
         response = budgethealthState.llm.invoke(
             f"Analyze this household savings readiness: current savings={state.current_savings}, "
@@ -190,12 +190,12 @@ if __name__ == "__main__":
     print("Welcome to the Household Financial Health Evaluator!")
     # Example input data for testing    
     example_data = {
-        "income": 5000,
-        "essential_costs": {"rent": 1500, "utilities": 300, "groceries": 400},
-        "discretionary_spending": {"entertainment": 200, "dining_out": 150},
-        "debts": {"credit_card": 1000, "student_loan": 5000},
-        "current_savings": 2000,
-        "savings_goal": {"emergency_fund": 5000, "vacation": 2000}
+        "income": 5000.0,
+        "essential_costs": 2200.0,
+        "discretionary_spending": 350.0,
+        "debts": 6000.0,
+        "current_savings": 2000.0,
+        "savings_goal": 7000.0
     }      
     run_budget_health_analysis(example_data)        
 
