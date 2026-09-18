@@ -1,5 +1,5 @@
 # =============================================================================
-# Household Financial Health Evaluator -- A LangGraph Learning Project
+# Household Financial Health Evaluator -- A LangGraph Learning Project 
 # ==============================================================================
 #
 # This project teaches LangGraph concepts by building a financial health
@@ -46,7 +46,8 @@
 #   python budget_health_graph.py
 #
 # DEPENDENCIES (same as requirements.txt):
-#   langgraph, langchain-openai, python-dotenv, pydantic
+#   langgraph, langchain-openai, python-dotenv, pydantic  
+
 
 import sys
 import operator
@@ -89,7 +90,8 @@ class budgethealthState(BaseModel):
             f"essential costs={essential_total}, "
             f"discretionary spending={discretionary_total}, surplus={surplus}."
         )
-        return {"messages": [f"Cash Flow Analysis: {response.content}"]}
+        return {"cash_flow_analysis": response.content,
+            "messages": [f"Cash Flow Analysis: {response.content}"]}
 
     @staticmethod
     def analyze_debt_pressure(state: "budgethealthState") -> dict:
@@ -99,7 +101,8 @@ class budgethealthState(BaseModel):
             f"Analyze this household debt pressure: total debt={total_debt}, "
             f"income={state.income}, debt-to-income ratio={debt_to_income_ratio:.2f}."
         )
-        return {"messages": [f"Debt Pressure Analysis: {response.content}"]}
+        return {"debt_pressure_analysis": response.content,
+            "messages": [f"Debt Pressure Analysis: {response.content}"]}
 
     @staticmethod
     def analyze_savings_readiness(state: "budgethealthState") -> dict:
@@ -109,7 +112,8 @@ class budgethealthState(BaseModel):
             f"Analyze this household savings readiness: current savings={state.current_savings}, "
             f"savings goal={savings_goal_total}, savings ratio={savings_ratio:.2f}."
         )
-        return {"messages": [f"Savings Readiness Analysis: {response.content}"]}
+        return {"savings_readiness_analysis": response.content,
+            "messages": [f"Savings Readiness Analysis: {response.content}"]}
 
 def classify_budget_health(state: "budgethealthState") -> dict:
     response = state.llm.invoke(
@@ -186,24 +190,51 @@ if __name__ == "__main__":
     print("Welcome to the Household Financial Health Evaluator!")
     # Example input data for testing    
     example_data = {
-        "income": 5000.0,
-        "essential_costs": {"rent": 1500.0, "utilities": 300.0, "groceries": 400.0},
-        "discretionary_spending": {"entertainment": 200.0, "dining_out": 150.0},
-        "debts": {"credit_card": 1000.0, "student_loan": 5000.0},
-        "current_savings": 2000.0,
-        "savings_goal": {"emergency_fund": 5000.0, "vacation": 2000.0}
+        "income": 5000,
+        "essential_costs": {"rent": 1500, "utilities": 300, "groceries": 400},
+        "discretionary_spending": {"entertainment": 200, "dining_out": 150},
+        "debts": {"credit_card": 1000, "student_loan": 5000},
+        "current_savings": 2000,
+        "savings_goal": {"emergency_fund": 5000, "vacation": 2000}
     }      
     run_budget_health_analysis(example_data)        
 
     while True:
         print("\nEnter your household financial data (or type 'exit' to quit):")
         try:
-            income = float(input("Monthly Income: "))
-            essential_costs = json.loads(input("Essential Costs (JSON format): "))
-            discretionary_spending = json.loads(input("Discretionary Spending (JSON format): "))
-            debts = json.loads(input("Debts (JSON format): "))
-            current_savings = float(input("Current Savings: "))
-            savings_goal = json.loads(input("Savings Goal (JSON format): "))
+            income_input = input("Monthly Income: ")
+            if income_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            income = float(income_input)
+            essential_input = input("Essential Costs: ")
+            if essential_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            essential_costs = json.loads(essential_input)
+            discretionary_input = input("Discretionary Spending: ")
+            if discretionary_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            discretionary_spending = json.loads(discretionary_input)
+            debts_input = input("Debts: ")
+            if debts_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            debts = json.loads(debts_input)
+
+            current_savings_input = input("Current Savings: ")
+            if current_savings_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            current_savings = float(current_savings_input)
+
+            savings_goal_input = input("Savings Goal: ")
+            if savings_goal_input.lower() == "exit":
+                print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
+                break
+            savings_goal = json.loads(savings_goal_input)
+
 
             user_data = {
                 "income": income,
@@ -218,9 +249,7 @@ if __name__ == "__main__":
 
         except (ValueError, json.JSONDecodeError) as error:
             print(f"Invalid input: {error}")
+            print("Please check your numbers and dictionaries.")
             continue
 
-        if not input:
-            continue
-            print("Thank you for using the Household Financial Health Evaluator. Goodbye!")
-            break
+        
